@@ -1,3 +1,45 @@
-{
-  "html_code": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Rastgele Şifre Oluşturucu</title>\n    <script src=\"https://cdn.tailwindcss.com\"></script>\n</head>\n<body class=\"bg-gray-100 flex items-center justify-center min-h-screen p-4\">\n\n    <div class=\"w-full max-w-md bg-white shadow-xl rounded-xl p-8 space-y-6\">\n        <h1 class=\"text-3xl font-bold text-center text-gray-800 mb-6\">Şifre Oluşturucu</h1>\n\n        <!-- Şifre Görüntüleme Alanı -->\n        <div class=\"flex items-center border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50\">\n            <input type=\"text\" id=\"passwordOutput\" readonly value=\"Şifre buraya gelecek\" \n                   class=\"flex-grow p-4 text-lg font-mono bg-transparent border-none focus:outline-none text-gray-700 truncate\">\n            <button id=\"copyButton\" class=\"p-4 bg-blue-500 hover:bg-blue-600 text-white transition duration-150 ease-in-out focus:outline-none\">\n                <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n                    <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3\" />\n                </svg>\n            </button>\n        </div>\n        <div id=\"copyMessage\" class=\"text-center text-sm text-green-600 opacity-0 transition-opacity duration-300\">Kopyalandı!</div>\n\n        <!-- Ayarlar -->\n        <div class=\"space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200\">\n            <div class=\"flex justify-between items-center\">\n                <label for=\"length\" class=\"text-gray-700 font-medium\">Şifre Uzunluğu:</label>\n                <span id=\"lengthValue\" class=\"text-lg font-bold text-blue-600\">12</span>\n            </div>\n            <input type=\"range\" id=\"length\" min=\"4\" max=\"32\" value=\"12\" class=\"w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer range-lg\">\n\n            <!-- Kontrol Kutuları -->\n            <div class=\"space-y-3 pt-2\">\n                <div class=\"flex items-center\">\n                    <input id=\"includeUppercase\" type=\"checkbox\" checked class=\"form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500\">\n                    <label for=\"includeUppercase\" class=\"ml-2 text-gray-700\">Büyük Harfler (A-Z)</label>\n                </div>\n                <div class=\"flex items-center\">\n                    <input id=\"includeNumbers\" type=\"checkbox\" checked class=\"form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500\">\n                    <label for=\"includeNumbers\" class=\"ml-2 text-gray-700\">Rakamlar (0-9)</label>\n                </div>\n                <div class=\"flex items-center\">\n                    <input id=\"includeSymbols\" type=\"checkbox\" class=\"form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500\">\n                    <label for=\"includeSymbols\" class=\"ml-2 text-gray-700\">Semboller (!@#$%)</label>\n                </div>\n            </div>\n        </div>\n\n        <!-- Oluştur Butonu -->\n        <button id=\"generateButton\" class=\"w-full bg-green-500 hover:bg-green-600 text-white text-xl font-semibold py-3 rounded-lg transition duration-150 ease-in-out shadow-md focus:outline-none focus:ring-4 focus:ring-green-300\">\n            Şifre Oluştur\n        </button>\n\n    </div>\n\n    <script>\n        document.addEventListener('DOMContentLoaded', () => {\n            const passwordOutput = document.getElementById('passwordOutput');\n            const generateButton = document.getElementById('generateButton');\n            const lengthSlider = document.getElementById('length');\n            const lengthValueSpan = document.getElementById('lengthValue');\n            const includeUppercase = document.getElementById('includeUppercase');\n            const includeNumbers = document.getElementById('includeNumbers');\n            const includeSymbols = document.getElementById('includeSymbols');\n            const copyButton = document.getElementById('copyButton');\n            const copyMessage = document.getElementById('copyMessage');\n\n            const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz';\n            const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';\n            const numberChars = '0123456789';\n            const symbolChars = '!@#$%^&*()_+[]{}|;:,.<>?';\n\n            function generatePassword() {\n                let characterSet = lowerCaseChars; // Küçük harfler her zaman dahil\n                \n                if (includeUppercase.checked) {\n                    characterSet += upperCaseChars;\n                }\n                if (includeNumbers.checked) {\n                    characterSet += numberChars;\n                }\n                if (includeSymbols.checked) {\n                    characterSet += symbolChars;\n                }\n\n                const length = parseInt(lengthSlider.value, 10);\n                let password = '';\n\n                if (characterSet.length === 0) {\n                    passwordOutput.value = \"Karakter seti seçilmedi!\";\n                    return;\n                }\n\n                for (let i = 0; i < length; i++) {\n                    const randomIndex = Math.floor(Math.random() * characterSet.length);\n                    password += characterSet[randomIndex];\n                }\n\n                passwordOutput.value = password;\n            }\n\n            function updateLengthDisplay() {\n                lengthValueSpan.textContent = lengthSlider.value;\n            }\n\n            function copyToClipboard() {\n                const text = passwordOutput.value;\n                if (text === \"Şifre buraya gelecek\" || text === \"Karakter seti seçilmedi!\") return;\n\n                navigator.clipboard.writeText(text).then(() => {\n                    copyMessage.classList.remove('opacity-0');\n                    copyMessage.classList.add('opacity-100');\n                    setTimeout(() => {\n                        copyMessage.classList.remove('opacity-100');\n                        copyMessage.classList.add('opacity-0');\n                    }, 2000);\n                }).catch(err => {\n                    console.error('Kopyalama başarısız: ', err);\n                });\n            }\n\n            // Olay Dinleyicileri\n            generateButton.addEventListener('click', generatePassword);\n            lengthSlider.addEventListener('input', updateLengthDisplay);\n            copyButton.addEventListener('click', copyToClipboard);\n\n            // Başlangıç ayarları\n            updateLengthDisplay();\n            generatePassword(); // Sayfa yüklendiğinde ilk şifreyi oluştur\n        });\n    </script>\n</body>\n</html>"
-}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Süper Şifre Oluşturucu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 flex items-center justify-center h-screen text-white">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-2xl w-96 border border-gray-700">
+        <h1 class="text-2xl font-bold mb-6 text-center text-blue-400">Şifre Oluşturucu</h1>
+        
+        <div class="bg-gray-700 p-4 rounded mb-4 text-center break-all text-xl font-mono tracking-wider" id="passwordDisplay">
+            ••••••••
+        </div>
+        
+        <div class="space-y-4">
+            <button onclick="generatePassword()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded transition duration-200">
+                Şifre Oluştur 🎲
+            </button>
+            <button onclick="copyPassword()" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded transition duration-200 text-sm">
+                Kopyala 📋
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function generatePassword() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+            let password = "";
+            for (let i = 0; i < 16; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById("passwordDisplay").innerText = password;
+        }
+        function copyPassword() {
+            const password = document.getElementById("passwordDisplay").innerText;
+            if (password !== "••••••••") {
+                navigator.clipboard.writeText(password);
+                alert("Şifre kopyalandı!");
+            }
+        }
+    </script>
+</body>
+</html>
