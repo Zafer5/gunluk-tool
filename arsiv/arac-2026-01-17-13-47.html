@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvoicePro X - Kurumsal Fatura ve Teklif Oluşturucu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Kurumsal Renk Paleti: Slate (Arka Plan/Kontrast), Indigo (Ana Marka), Emerald (Başarı/Onay) */
+        :root {
+            --color-primary: #4f46e5; /* Indigo-600 */
+            --color-secondary: #1e293b; /* Slate-800 */
+            --color-success: #10b981; /* Emerald-500 */
+        }
+        body {
+            background-color: #f1f5f9; /* Slate-100 */
+        }
+        .app-container {
+            max-width: 1200px;
+        }
+        .input-field:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.5);
+        }
+        .btn-primary {
+            background-color: var(--color-primary);
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* Indigo-700 */
+        }
+        .btn-success {
+            background-color: var(--color-success);
+            transition: background-color 0.2s;
+        }
+        .btn-success:hover {
+            background-color: #059669; /* Emerald-600 */
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+
+    <div id="app" class="app-container mx-auto p-4 sm:p-6 lg:p-8 min-h-screen">
+        
+        <!-- Header -->
+        <header class="bg-white shadow-lg rounded-xl p-6 mb-8 border-t-4 border-indigo-600">
+            <div class="flex justify-between items-center flex-wrap">
+                <h1 class="text-3xl font-extrabold text-slate-800 flex items-center">
+                    <svg class="w-8 h-8 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V7a2 2 0 012-2h5l2 2h7a2 2 0 012 2v10a2 2 0 01-2 2z"></path></svg>
+                    InvoicePro X
+                </h1>
+                <span class="text-sm font-medium text-indigo-600 bg-indigo-100 py-1 px-3 rounded-full mt-2 sm:mt-0">Premium Fatura & Teklif Yönetimi</span>
+            </div>
+        </header>
+
+        <!-- Ana Düzen: Sol (Form), Sağ (Önizleme) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Sol Panel: Giriş Formları -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Firma ve Müşteri Bilgileri -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-700 border-b pb-2 flex items-center">
+                         <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Firma & Müşteri Detayları
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <input type="text" id="senderName" placeholder="Gönderen Firma Adı" class="input-field w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                        <input type="text" id="senderAddress" placeholder="Gönderen Adres (Satır 1)" class="input-field w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                        <input type="text" id="recipientName" placeholder="Müşteri/Alıcı Firma Adı" class="input-field w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                        <input type="text" id="recipientAddress" placeholder="Müşteri Adresi (Satır 1)" class="input-field w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                    </div>
+                </div>
+
+                <!-- Fatura Bilgileri -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-700 border-b pb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 16h.01"></path></svg>
+                        Fatura Detayları
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="invoiceNumber" placeholder="Fatura No (INV-2024-001)" class="input-field p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                        <input type="date" id="invoiceDate" class="input-field p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" id="vatRate" placeholder="KDV Oranı (%)" value="20" min="0" max="100" class="input-field p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                        <input type="text" id="currency" placeholder="Para Birimi (USD/EUR/TRY)" value="TRY" class="input-field p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2">
+                    </div>
+                </div>
+
+                <!-- Kalem Ekleme -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-700 border-b pb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Hizmet/Ürün Kalemleri
+                    </h2>
+                    
+                    <div id="lineItemContainer" class="space-y-3 mb-4 max-h-64 overflow-y-auto pr-2">
+                        <!-- Kalemler buraya JS ile eklenecek -->
+                    </div>
+
+                    <button id="addLineItemBtn" type="button" class="w-full py-2 px-4 border border-dashed border-indigo-300 text-indigo-600 rounded-lg hover:bg-indigo-50 transition duration-150 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Yeni Satır Ekle
+                    </button>
+                </div>
+
+                <!-- Kaydetme ve İndirme Butonları -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-slate-200 flex flex-col space-y-3">
+                    <button id="downloadPdfBtn" type="button" class="btn-primary text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        PDF Olarak İndir
+                    </button>
+                    <button id="saveLocalBtn" type="button" class="btn-success text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        Ayarları Kaydet (LocalStorage)
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Sağ Panel: Fatura Önizleme Alanı -->
+            <div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-2xl border border-slate-200">
+                <div id="invoicePreview" class="p-8 border border-slate-300 min-h-[800px] bg-white">
+                    
+                    <!-- Logo ve Başlık -->
+                    <div class="flex justify-between items-start border-b-4 border-indigo-600 pb-4 mb-6">
+                        <div>
+                            <h3 id="previewSenderName" class="text-2xl font-extrabold text-slate-800">Firma Adı</h3>
+                            <p id="previewSenderAddress" class="text-sm text-gray-500 mt-1">Adres Bilgisi</p>
+                        </div>
+                        <div class="text-right">
+                            <h1 class="text-4xl font-black uppercase text-indigo-600">FATURA</h1>
+                            <p class="text-sm mt-1 text-slate-600">No: <span id="previewInvoiceNumber">INV-XXX</span></p>
+                            <p class="text-sm text-slate-600">Tarih: <span id="previewInvoiceDate">YYYY-MM-DD</span></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Müşteri Bilgileri -->
+                    <div class="mb-10 p-3 bg-slate-50 border-l-4 border-indigo-400 rounded-lg">
+                        <p class="text-xs font-bold uppercase text-indigo-600 mb-1">Fatura Kime Kesildi:</p>
+                        <h4 id="previewRecipientName" class="font-semibold text-lg text-slate-700">Müşteri Şirketi A.Ş.</h4>
+                        <p id="previewRecipientAddress" class="text-sm text-gray-600">Müşteri Adresi</p>
+                    </div>
+                    
+                    <!-- Kalem Tablosu -->
+                    <table class="w-full border-collapse mb-6">
+                        <thead>
+                            <tr class="bg-slate-200 text-sm uppercase text-left font-bold text-slate-700">
+                                <th class="p-3 border border-slate-300 w-1/2">Açıklama</th>
+                                <th class="p-3 border border-slate-300 w-1/6 text-right">Miktar</th>
+                                <th class="p-3 border border-slate-300 w-1/6 text-right">Birim Fiyat</th>
+                                <th class="p-3 border border-slate-300 w-1/6 text-right">Tutar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewTableBody">
+                            <!-- Dinamik içerik buraya gelecek -->
+                            <tr class="border-b border-slate-200">
+                                <td class="p-3 text-gray-700 italic">Örnek Hizmet 1</td>
+                                <td class="p-3 text-right text-gray-700">1</td>
+                                <td class="p-3 text-right text-gray-700">500.00</td>
+                                <td class="p-3 text-right font-semibold text-slate-800">500.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Özet (Alt Kısım) -->
+                    <div class="flex justify-end">
+                        <div class="w-full sm:w-1/2 lg:w-2/5 space-y-2 text-sm">
+                            <div class="flex justify-between p-2 border-b border-slate-200">
+                                <span>Ara Toplam:</span>
+                                <span id="previewSubtotal" class="font-medium text-slate-700">0.00</span>
+                            </div>
+                            <div class="flex justify-between p-2 border-b border-slate-200">
+                                <span>KDV (<span id="previewVatRateDisplay">20</span>%):</span>
+                                <span id="previewVatAmount" class="font-medium text-slate-700">0.00</span>
+                            </div>
+                            <div class="flex justify-between p-2 bg-indigo-50 rounded-lg font-bold text-lg">
+                                <span>TOPLAM:</span>
+                                <span id="previewTotalAmount" class="text-indigo-700">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notlar -->
+                    <div class="mt-12 pt-4 border-t border-slate-200">
+                        <p class="text-xs uppercase font-bold text-gray-500 mb-1">Ödeme Koşulları:</p>
+                        <p class="text-sm italic text-gray-600">"Ödeme, faturanın kesilmesinden itibaren 15 gün içinde gerçekleştirilmelidir."</p>
+                    </div>
+
+                </div>
+
+                 <!-- Görsel Olarak Kaydet Butonu (HTML2Canvas Gerektirir, burası sadece tasarım) -->
+                 <button id="downloadImageBtn" type="button" class="mt-4 w-full py-3 bg-emerald-500 text-white font-bold rounded-lg shadow-md hover:bg-emerald-600 flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Görsel Olarak Kaydet (PNG/JPEG)
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scriptler (LocalStorage ve Hesaplama Mantığı) -->
+    <script>
+        const STORAGE_KEY = 'invoiceProXData';
+        const lineItemContainer = document.getElementById('lineItemContainer');
+        const previewTableBody = document.getElementById('previewTableBody');
+        const formInputs = {
+            senderName: document.getElementById('senderName'),
+            senderAddress: document.getElementById('senderAddress'),
+            recipientName: document.getElementById('recipientName'),
+            recipientAddress: document.getElementById('recipientAddress'),
+            invoiceNumber: document.getElementById('invoiceNumber'),
+            invoiceDate: document.getElementById('invoiceDate'),
+            vatRate: document.getElementById('vatRate'),
+            currency: document.getElementById('currency'),
+        };
+        const previewElements = {
+            senderName: document.getElementById('previewSenderName'),
+            senderAddress: document.getElementById('previewSenderAddress'),
+            recipientName: document.getElementById('previewRecipientName'),
+            recipientAddress: document.getElementById('previewRecipientAddress'),
+            invoiceNumber: document.getElementById('previewInvoiceNumber'),
+            invoiceDate: document.getElementById('previewInvoiceDate'),
+            vatRateDisplay: document.getElementById('previewVatRateDisplay'),
+            subtotal: document.getElementById('previewSubtotal'),
+            vatAmount: document.getElementById('previewVatAmount'),
+            totalAmount: document.getElementById('previewTotalAmount'),
+        };
+
+        let itemCounter = 0;
+
+        // --------------------------------------------------
+        // 1. UTILITY VE FORMATLAMA
+        // --------------------------------------------------
+
+        const formatCurrency = (amount, currency = 'TRY') => {
+            return new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: currency,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(amount);
+        };
+
+        // --------------------------------------------------
+        // 2. LOCAL STORAGE İŞLEMLERİ
+        // --------------------------------------------------
+
+        const saveToLocalStorage = () => {
+            const data = {
+                form: {},
+                items: [],
+                timestamp: new Date().toISOString()
+            };
+
+            // Form verilerini kaydet
+            Object.keys(formInputs).forEach(key => {
+                data.form[key] = formInputs[key].value;
+            });
+
+            // Kalem verilerini kaydet
+            document.querySelectorAll('.line-item-row').forEach(row => {
+                data.items.push({
+                    description: row.querySelector('.item-description').value,
+                    quantity: row.querySelector('.item-quantity').value,
+                    unitPrice: row.querySelector('.item-price').value,
+                });
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            console.log("Veriler LocalStorage'a kaydedildi.");
+        };
+
+        const loadFromLocalStorage = () => {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+
+                // Form verilerini yükle
+                Object.keys(formInputs).forEach(key => {
+                    if (data.form[key] !== undefined) {
+                        formInputs[key].value = data.form[key];
+                    }
+                });
+
+                // Kalemleri yeniden oluştur
+                if (data.items && data.items.length > 0) {
+                    data.items.forEach(item => {
+                        createLineItem(item.description, item.quantity, item.unitPrice);
+                    });
+                } else {
+                     // Eğer kayıtlı kalem yoksa, varsayılan boş bir tane ekle
+                     createLineItem();
+                }
+                
+                updatePreview(); // Yükleme sonrası önizlemeyi güncelle
+                console.log("Veriler LocalStorage'dan yüklendi.");
+            } else {
+                // İlk çalıştırmada boş bir kalem ekle
+                createLineItem();
+            }
+        };
+
+        // --------------------------------------------------
+        // 3. KALEM YÖNETİMİ (DOM MANİPÜLASYONU)
+        // --------------------------------------------------
+
+        const createLineItem = (description = '', quantity = '', unitPrice = '') => {
+            itemCounter++;
+            const lineId = `item-${itemCounter}`;
+            
+            const row = document.createElement('div');
+            row.className = 'line-item-row flex gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200 items-end';
+            row.setAttribute('data-id', lineId);
+
+            row.innerHTML = `
+                <div class="flex-grow">
+                    <input type="text" class="item-description w-full p-2 text-sm border border-slate-300 rounded-md placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Hizmet/Ürün Açıklaması" value="${description}">
+                </div>
+                <div class="w-1/6 min-w-[60px]">
+                    <input type="number" step="0.01" min="0" class="item-quantity w-full p-2 text-sm border border-slate-300 rounded-md text-right placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Miktar" value="${quantity || ''}">
+                </div>
+                <div class="w-1/6 min-w-[80px]">
+                    <input type="number" step="0.01" min="0" class="item-price w-full p-2 text-sm border border-slate-300 rounded-md text-right placeholder-gray-400 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Birim Fiyat" value="${unitPrice || ''}">
+                </div>
+                <div class="w-1/6 min-w-[90px]">
+                    <input type="text" readonly class="item-total w-full p-2 text-sm bg-slate-100 border border-slate-300 rounded-md text-right font-semibold text-slate-700" value="0.00">
+                </div>
+                <button type="button" class="remove-item-btn p-2 text-red-500 hover:bg-red-100 rounded-lg transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            `;
+            
+            lineItemContainer.appendChild(row);
+            
+            // Event Listener'ları ata
+            row.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            row.querySelector('.remove-item-btn').addEventListener('click', () => {
+                if (document.querySelectorAll('.line-item-row').length > 1) {
+                    row.remove();
+                    updatePreview();
+                } else {
+                    alert("En az bir satır kalmalıdır.");
+                }
+            });
+            
+            // Eğer yeni ekleniyorsa, fokuslan
+            if (!description && !quantity && !unitPrice) {
+                row.querySelector('.item-description').focus();
+            }
+        };
+
+        // --------------------------------------------------
+        // 4. ÖNİZLEME VE HESAPLAMA
+        // --------------------------------------------------
+
+        const updatePreview = () => {
+            saveToLocalStorage(); // Her input değişiminde kaydet
+
+            // Firma ve Fatura Bilgilerini Güncelle
+            previewElements.senderName.textContent = formInputs.senderName.value || 'Gönderen Firma Adı';
+            previewElements.senderAddress.textContent = formInputs.senderAddress.value || 'Adres Bilgisi';
+            previewElements.recipientName.textContent = formInputs.recipientName.value || 'Müşteri Şirketi A.Ş.';
+            previewElements.recipientAddress.textContent = formInputs.recipientAddress.value || 'Müşteri Adresi';
+            previewElements.invoiceNumber.textContent = formInputs.invoiceNumber.value || 'INV-XXX';
+            
+            const invoiceDate = formInputs.invoiceDate.value || new Date().toISOString().split('T')[0];
+            previewElements.invoiceDate.textContent = invoiceDate.split('-').reverse().join('.');
+
+            const vatRate = parseFloat(formInputs.vatRate.value) || 0;
+            const currency = formInputs.currency.value.toUpperCase() || 'TRY';
+
+            previewElements.vatRateDisplay.textContent = vatRate.toFixed(2);
+            
+            let subtotal = 0;
+            let vatTotal = 0;
+            let total = 0;
+            let htmlContent = '';
+
+            // Kalemleri işle
+            document.querySelectorAll('.line-item-row').forEach(row => {
+                const description = row.querySelector('.item-description').value || 'Açıklama Yok';
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const unitPrice = parseFloat(row.querySelector('.item-price').value) || 0;
+                
+                const lineTotal = quantity * unitPrice;
+                subtotal += lineTotal;
+
+                // Satır içi toplamı güncelle (Görsel alandaki)
+                row.querySelector('.item-total').value = lineTotal.toFixed(2);
+
+                // Önizleme tablosuna ekle
+                htmlContent += `
+                    <tr class="border-b border-slate-200 hover:bg-slate-50 transition duration-100">
+                        <td class="p-3 text-gray-700 truncate max-w-xs">${description}</td>
+                        <td class="p-3 text-right text-gray-700">${quantity.toFixed(2)}</td>
+                        <td class="p-3 text-right text-gray-700">${formatCurrency(unitPrice, currency).replace(currency, '').trim()}</td>
+                        <td class="p-3 text-right font-semibold text-slate-800">${formatCurrency(lineTotal, currency).replace(currency, '').trim()}</td>
+                    </tr>
+                `;
+            });
+            
+            // Özet Hesaplamaları
+            vatTotal = subtotal * (vatRate / 100);
+            total = subtotal + vatTotal;
+
+            // Özetleri Güncelle
+            previewElements.subtotal.textContent = formatCurrency(subtotal, currency);
+            previewElements.vatAmount.textContent = formatCurrency(vatTotal, currency);
+            previewElements.totalAmount.textContent = formatCurrency(total, currency);
+            
+            // Tabloyu güncelle
+            previewTableBody.innerHTML = htmlContent || '<tr class="text-center italic text-gray-500"><td colspan="4" class="p-4">Lütfen en az bir kalem ekleyin.</td></tr>';
+
+            // Para birimi sembollerini toplam alanlara ekle (FormatCurrency bunu içerir, ama burda sadece sayısal değeri gösteriyorsak temizlemeliyiz.)
+            // Basitlik adına, formatCurrency'yi sadece son toplamda kullanalım, diğerlerinde sadece rakam gösterelim.
+            
+            previewElements.subtotal.textContent = total > 0 ? total.toFixed(2) : '0.00';
+            previewElements.vatAmount.textContent = total > 0 ? vatTotal.toFixed(2) : '0.00';
+            previewElements.totalAmount.textContent = total > 0 ? total.toFixed(2) : '0.00';
+            
+            // Not: Gerçek bir PDF exportunda sembol kullanımı daha dikkatli yönetilmelidir.
+        };
+
+
+        // --------------------------------------------------
+        // 5. EVENT LİSTENERS (Butonlar)
+        // --------------------------------------------------
+
+        // Tüm form inputları değiştikçe önizlemeyi güncelle
+        Object.values(formInputs).forEach(input => {
+            if (input.type !== 'date') { // Tarih için özel bir şey yapmaya gerek yok
+                input.addEventListener('input', updatePreview);
+            } else {
+                input.addEventListener('change', updatePreview);
+            }
+        });
+
+        document.getElementById('addLineItemBtn').addEventListener('click', () => createLineItem());
+        document.getElementById('saveLocalBtn').addEventListener('click', saveToLocalStorage);
+        
+        // PDF İndirme (Basit bir HTML'den PDF'e dönüştürme simülasyonu - html2pdf.js gerektirir, burada sadece fonksiyonu tanımlıyoruz)
+        document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+            alert('PDF Oluşturma Fonksiyonu Çalıştırılıyor. (Gerçek uygulamada html2pdf.js kullanılmalıdır)');
+            // Gerçek projede:
+            // const element = document.getElementById('invoicePreview');
+            // html2canvas(element, { scale: 2 }).then((canvas) => {
+            //     const { jsPDF } = window.jspdf;
+            //     const pdf = new jsPDF('p', 'mm', 'a4');
+            //     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297);
+            //     pdf.save("fatura-" + formInputs.invoiceNumber.value + ".pdf");
+            // });
+        });
+        
+        // Görsel İndirme (HTML2Canvas Simülasyonu)
+        document.getElementById('downloadImageBtn').addEventListener('click', () => {
+            alert('Görsel Kaydetme Fonksiyonu Çalıştırılıyor. (Gerçek uygulamada html2canvas kütüphanesi gereklidir)');
+        });
+
+        // Başlangıç
+        loadFromLocalStorage();
+        // Sayfa yüklenince ilk kez güncelle
+        updatePreview(); 
+
+    </script>
+
+</body>
+</html>
