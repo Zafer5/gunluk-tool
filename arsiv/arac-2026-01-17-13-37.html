@@ -1,0 +1,227 @@
+Harika bir meydan okuma. Pazarlamacıların ve içerik üreticilerinin sürekli karşılaştığı, manuel olarak zahmetli olan bir problemi çözecek, "Premium" hissettiren bir **Sosyal Medya İçerik Optimizasyon Aracı (Caption & Hashtag Generator)** tasarlayacağım.
+
+Bu araç, kullanıcıların girdikleri anahtar kelimeleri veya kısa bir konsepti alıp, birden fazla platforma (Instagram, X/Twitter, LinkedIn) uygun başlıklar/açıklamalar ve optimize edilmiş hashtag setleri üretecek.
+
+İşte Micro-SaaS fikrim: **"ContentSculptor Pro"**
+
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContentSculptor Pro - Akıllı İçerik Optimizasyon Aracı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Premium hissiyat için özel fontlar ve gölgelendirmeler */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9; /* Hafif soğuk gri arka plan */
+        }
+        .card {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+        }
+        .output-box {
+            min-height: 150px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white card rounded-2xl p-6 sm:p-10 border border-gray-100">
+        
+        <!-- Başlık -->
+        <header class="mb-8 pb-4 border-b border-indigo-100">
+            <h1 class="text-4xl font-extrabold text-gray-900 flex items-center">
+                <svg class="w-8 h-8 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                ContentSculptor Pro
+            </h1>
+            <p class="text-gray-500 mt-1">Anahtar Kelimelerinizden Optimize Edilmiş Sosyal Medya İçerikleri Oluşturun.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Sol Sütun: Giriş Alanları -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                    <label for="topic" class="block text-sm font-medium text-indigo-700 mb-2">Ana Konu / Anahtar Kelime</label>
+                    <input type="text" id="topic" value="Micro-SaaS Proje Geliştirme" placeholder="Örn: Yapay Zeka ile İçerik Üretimi"
+                           class="w-full p-3 border border-indigo-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 shadow-sm">
+                    <p class="text-xs text-indigo-500 mt-1">Bu, içeriğinizin temelini oluşturacak.</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label for="tone" class="block text-sm font-medium text-gray-700 mb-2">Ton Seçimi</label>
+                    <select id="tone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                        <option value="professional">Profesyonel ve Bilgilendirici</option>
+                        <option value="energetic">Coşkulu ve İlham Verici</option>
+                        <option value="casual">Günlük ve Samimi</option>
+                        <option value="urgent">Aciliyet Yaratan (CTA Odaklı)</option>
+                    </select>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <label for="cta" class="block text-sm font-medium text-gray-700 mb-2">Eylem Çağrısı (Opsiyonel)</label>
+                    <input type="text" id="cta" value="Hemen Deneyin!" placeholder="Örn: Daha Fazla Bilgi Alın"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                </div>
+                
+                <button onclick="generateContent()" class="btn-primary w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 shadow-lg">
+                    İçeriği Oluştur & Optimizasyonu Başlat
+                </button>
+            </div>
+
+            <!-- Sağ Sütun: Çıktı Alanları -->
+            <div class="lg:col-span-2 space-y-6">
+                <h2 class="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">Optimizasyon Sonuçları</h2>
+                
+                <!-- LinkedIn Çıktısı -->
+                <div class="bg-white p-5 rounded-xl border border-green-100 shadow-lg">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-semibold text-green-700">LinkedIn (Profesyonel)</h3>
+                        <button onclick="copyToClipboard('linkedinOutput')" class="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full hover:bg-green-200 transition">Kopyala</button>
+                    </div>
+                    <div id="linkedinOutput" class="output-box p-3 bg-gray-50 rounded-lg border border-green-200 text-gray-700 text-sm">
+                        Sonuçlar buraya gelecek...
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">İdeal: Kısa paragraflar, profesyonel dil, 3-5 hashtag.</p>
+                </div>
+
+                <!-- Instagram Çıktısı -->
+                <div class="bg-white p-5 rounded-xl border border-pink-100 shadow-lg">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-semibold text-pink-700">Instagram (Görsel Odaklı)</h3>
+                        <button onclick="copyToClipboard('instagramOutput')" class="text-xs bg-pink-100 text-pink-700 px-3 py-1 rounded-full hover:bg-pink-200 transition">Kopyala</button>
+                    </div>
+                    <div id="instagramOutput" class="output-box p-3 bg-gray-50 rounded-lg border border-pink-200 text-gray-700 text-sm">
+                        Sonuçlar buraya gelecek...
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">İdeal: Emoji kullanımı, ilgi çekici ilk satır, 15-25 hashtag (gizli).</p>
+                </div>
+
+                <!-- X/Twitter Çıktısı -->
+                <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-lg">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-semibold text-blue-700">X / Twitter (Kısa ve Etkili)</h3>
+                        <button onclick="copyToClipboard('twitterOutput')" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition">Kopyala</button>
+                    </div>
+                    <div id="twitterOutput" class="output-box p-3 bg-gray-50 rounded-lg border border-blue-200 text-gray-700 text-sm">
+                        Sonuçlar buraya gelecek...
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">İdeal: Maksimum 280 karakter (fonksiyon içinde simüle edilir), güçlü başlık.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-10 pt-6 border-t border-gray-100 text-center">
+            <p class="text-sm text-gray-400">ContentSculptor Pro &copy; 2024 | Full-Stack Mimarisi ile Geliştirilmiştir.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        function generateContent() {
+            const topic = document.getElementById('topic').value.trim();
+            const tone = document.getElementById('tone').value;
+            const cta = document.getElementById('cta').value.trim();
+
+            if (!topic) {
+                alert("Lütfen ana konuyu veya anahtar kelimeyi girin!");
+                return;
+            }
+
+            // Basit bir "Premium" simülasyon fonksiyonu (Gerçek bir SaaS'ta bu LLM API çağrısı olurdu)
+            const results = createMockContent(topic, tone, cta);
+
+            document.getElementById('linkedinOutput').innerText = results.linkedin;
+            document.getElementById('instagramOutput').innerText = results.instagram;
+            document.getElementById('twitterOutput').innerText = results.twitter;
+        }
+
+        function createMockContent(topic, tone, cta) {
+            const baseHashtags = ["#MicroSaaS", "#SaaS", "#Girisim", "#Teknoloji", "#Yazilim"];
+            let formattedTopic = topic.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+            let linkedinCaption = "";
+            let instagramCaption = "";
+            let twitterTweet = "";
+
+            // Ton bazlı içerik üretimi simülasyonu
+            if (tone === 'professional') {
+                linkedinCaption = `Stratejik bakış açısıyla, ${formattedTopic} alanındaki yenilikleri inceliyoruz. Dijital dönüşümde verimliliği artırmanın kilit noktaları: ${cta}. Detaylar için bizi takip edin.`;
+                instagramCaption = `⚙️ ${formattedTopic} ile iş akışınızı yeniden tanımlayın! Bu dönüşüm, profesyonel dünyaya netlik getiriyor. ${cta} 👇`;
+                twitterTweet = `Verimlilik Alarmı: ${formattedTopic} dönüşümü başladı. Stratejik adımlarınızı belirleyin. ${cta ? `(${cta})` : ''}`;
+            } else if (tone === 'energetic') {
+                linkedinCaption = `Heyecan verici bir gelişme! ${formattedTopic} ile pazarda çığır açıyoruz. Bu potansiyeli kaçırmayın! Hemen harekete geçin ve lider olun. ${cta}!`;
+                instagramCaption = `🚀 ${formattedTopic} enerjisiyle dolu bir gün! Sınırları zorlamaya hazır mısınız? Hemen şimdi aksiyona geç! ${cta} ✨`;
+                twitterTweet = `BÜYÜK FIRSAT: ${formattedTopic}! Durma zamanı değil. Hemen tıkla ve farkı yarat. ${cta ? `🚀 ${cta}` : ''}`;
+            } else if (tone === 'casual') {
+                linkedinCaption = `Günlük hayattan bir kesit: ${formattedTopic} hakkında ne düşünüyorsunuz? Basit çözümler her zaman en iyisidir. ${cta} belki size yardımcı olabilir.`;
+                instagramCaption = `☕ Sabah kahvesi eşliğinde ${formattedTopic} üzerine biraz düşündük. Basit ve etkili olmak önemli. ${cta} için link bio'da!`;
+                twitterTweet = `${formattedTopic} hakkında kısa bir not: Karmaşıklaştırmayın, basit tutun. 🤔 ${cta ? `Bakınız: ${cta}` : ''}`;
+            } else if (tone === 'urgent') {
+                 linkedinCaption = `SON ŞANS: ${formattedTopic} trendini yakalamak için son günler! Piyasada geride kalmayın. Hemen şimdi bu fırsatı değerlendirin. ${cta.toUpperCase()}!`;
+                 instagramCaption = `⏰ DURMA! ${formattedTopic} konusunda rakiplerinizden geri kalmayın. BU FIRSAT UÇUYOR! ${cta.toUpperCase()} 💥`;
+                 twitterTweet = `ACİL: ${formattedTopic} alanında rekabet kızışıyor. Harekete geçmek için 24 saatiniz var. ${cta.toUpperCase()}!`;
+            }
+            
+            // Hashtag Oluşturma (Platforma özel uyarlama)
+            const commonTags = [...baseHashtags, "#DigitalMarketing", "#Inovasyon"];
+            const platformTags = {
+                linkedin: [...commonTags.slice(0, 5), "#Leadership", "#BusinessStrategy"].join(' '),
+                instagram: ["#girişimcilik", "#yaşamtarzı", "#productivite", "#dailyinspiration", ...commonTags.slice(1, 5), "#growth"].join(' ') + "\n\n" + commonTags.slice(0, 5).join(' '), // Instagram'da alt satıra yazma simülasyonu
+                twitter: commonTags.slice(0, 4).join(' ') + " " + "#News"
+            };
+
+            return {
+                linkedin: `Başlık: ${formattedTopic} Analizi\n\n${linkedinCaption}\n\n---\n#Hashtagler:\n${platformTags.linkedin}`,
+                instagram: `Caption:\n${instagramCaption}\n\n${cta ? `\n[CTA Butonu: ${cta}]` : ''}\n\n${' '.repeat(20)}\n\n#Hashtagler:\n${platformTags.instagram}`,
+                twitter: `Tweet (${twitterTweet.length}/280 karakter):\n${twitterTweet}\n\nHashtagler: ${platformTags.twitter}`
+            };
+        }
+
+        function copyToClipboard(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            
+            // Tarayıcı API'si ile kopyalama
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Basit görsel geri bildirim
+                const button = event.target;
+                const originalText = button.innerText;
+                button.innerText = 'Kopyalandı!';
+                button.classList.remove('bg-green-100', 'text-green-700');
+                button.classList.add('bg-indigo-500', 'text-white');
+
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.classList.add('bg-green-100', 'text-green-700');
+                    button.classList.remove('bg-indigo-500', 'text-white');
+                }, 1500);
+            }).catch(err => {
+                console.error('Kopyalama hatası:', err);
+                alert("Kopyalama başarısız oldu. Lütfen metni manuel olarak seçin.");
+            });
+        }
+
+        // Başlangıçta placeholder'ları doldur
+        window.onload = function() {
+            generateContent();
+        };
+    </script>
+
+</body>
+</html>
+```
