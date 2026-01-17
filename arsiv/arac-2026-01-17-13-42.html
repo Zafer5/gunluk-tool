@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProInvoice X: Kurumsal Fatura ve Teklif Oluşturucu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Kurumsal Renk Paleti */
+        :root {
+            --color-primary: #4f46e5; /* Indigo-600 */
+            --color-secondary: #10b981; /* Emerald-500 */
+            --color-background: #f9fafb; /* Gray-50 */
+            --color-surface: #ffffff; /* White */
+            --color-text-dark: #1f2937; /* Gray-800 */
+        }
+        body {
+            background-color: var(--color-background);
+            font-family: 'Inter', sans-serif;
+        }
+        .invoice-container {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        /* SVG Icon Styles */
+        .icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': 'var(--color-primary)',
+                        'secondary': 'var(--color-secondary)',
+                        'surface': 'var(--color-surface)',
+                        'dark-text': 'var(--color-text-dark)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <div id="app" class="max-w-7xl mx-auto">
+        
+        <!-- Başlık ve Kontroller -->
+        <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-xl shadow-lg border-t-4 border-primary">
+            <h1 class="text-3xl font-extrabold text-dark-text mb-4 sm:mb-0">ProInvoice X <span class="text-primary text-lg font-medium ml-2">v2.1</span></h1>
+            <div class="flex space-x-3">
+                <button id="btn-export-pdf" class="flex items-center px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200 shadow-md">
+                    <svg class="icon mr-2" viewBox="0 0 24 24"><path d="M19,8H5C3.9,8,3,8.9,3,10v8c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2v-8C21,8.9,20.1,8,19,8z M19,18H5V12h14V18z M19,10H5V9h14V10z M13,15H11v-2h2V15z M17,15h-2v-2h2V15z M9,15H7v-2h2V15z"/></svg>
+                    PDF Olarak İndir
+                </button>
+                <button id="btn-export-html" class="flex items-center px-4 py-2 bg-secondary text-white font-semibold rounded-lg hover:bg-emerald-600 transition duration-200 shadow-md">
+                    <svg class="icon mr-2" viewBox="0 0 24 24"><path d="M16 2H8C6.9 2 6 2.9 6 4v16c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 17H9V5h6v14zM12 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0-4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0-4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+                    Kopyala
+                </button>
+            </div>
+        </header>
+
+        <!-- Ana Uygulama Yapısı -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- SOL SÜTUN: Ayarlar ve Veri Girişi -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Fatura Bilgileri -->
+                <section class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-primary flex items-center">
+                        <svg class="icon mr-2" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.31 10.55 8 11.91 4.7-1.36 8-6.36 8-11.91V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.7 7 3.7v4.69c-3.72-.15-6.47-1.71-7-3.69zM12 3.12l-5 2.78v4.69c0 3.57 2.16 6.77 5 7.74 2.84-.97 5-4.17 5-7.74V5.9L12 3.12z"/></svg>
+                        Belge Bilgileri
+                    </h2>
+                    <div class="space-y-4">
+                        <input type="text" id="doc-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Fatura / Teklif (Tip)">
+                        <input type="text" id="doc-number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Belge Numarası (INV-001)">
+                        <input type="date" id="doc-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition">
+                        <input type="date" id="due-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Vade Tarihi (Opsiyonel)">
+                    </div>
+                </section>
+
+                <!-- Gönderen (Siz) -->
+                <section class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-primary flex items-center">
+                        <svg class="icon mr-2" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.5c-2.49 0-4.53-1.91-4.95-4.45h9.9c-.42 2.54-2.46 4.45-4.95 4.45z"/></svg>
+                        Sizin Bilgileriniz (Gönderen)
+                    </h2>
+                    <div class="space-y-3">
+                        <input type="text" id="sender-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Şirket Adı / Adınız">
+                        <input type="text" id="sender-address" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Adres Satır 1">
+                        <input type="text" id="sender-tax-id" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Vergi No / Kimlik">
+                    </div>
+                </section>
+
+                <!-- Müşteri (Alıcı) -->
+                <section class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-primary flex items-center">
+                        <svg class="icon mr-2" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Müşteri Bilgileri (Alıcı)
+                    </h2>
+                    <div class="space-y-3">
+                        <input type="text" id="client-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Müşteri Şirket Adı">
+                        <input type="text" id="client-address" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Adres Satır 1">
+                        <input type="text" id="client-tax-id" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Vergi No / Kimlik">
+                    </div>
+                </section>
+
+                <!-- Vergi Ayarları -->
+                <section class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-xl font-bold mb-4 text-primary flex items-center">
+                        <svg class="icon mr-2" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.31 10.55 8 11.91 4.7-.36 8-6.36 8-11.91V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.7 7 3.7v4.69c-3.72-.15-6.47-1.71-7-3.69zM12 3.12l-5 2.78v4.69c0 3.57 2.16 6.77 5 7.74 2.84-.97 5-4.17 5-7.74V5.9L12 3.12z"/></svg>
+                        Vergi Ayarları
+                    </h2>
+                    <div class="flex items-center justify-between mb-3">
+                        <label for="vat-rate" class="text-sm font-medium text-gray-700">KDV Oranı (%)</label>
+                        <input type="number" id="vat-rate" value="18" min="0" max="100" step="0.01" class="w-20 p-2 border border-gray-300 rounded-lg text-right focus:ring-primary focus:border-primary transition">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label for="currency-symbol" class="text-sm font-medium text-gray-700">Para Birimi Sembolü</label>
+                        <input type="text" id="currency-symbol" value="₺" class="w-20 p-2 border border-gray-300 rounded-lg text-center focus:ring-primary focus:border-primary transition">
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- SAĞ SÜTUN: Fatura Önizleme -->
+            <div class="lg:col-span-8">
+                <div id="invoice-preview" class="invoice-container bg-surface p-8 sm:p-12 rounded-xl border border-gray-100">
+                    
+                    <!-- Logo Alanı -->
+                    <div class="flex justify-between items-start mb-10 border-b pb-4 border-gray-200">
+                        <div class="text-2xl font-bold text-primary/80">
+                             ProInvoice X
+                        </div>
+                        <div class="text-right">
+                            <h2 id="preview-doc-type" class="text-3xl font-extrabold text-gray-800">FATURA</h2>
+                            <p class="text-sm text-gray-500 mt-1"><span id="preview-doc-number">INV-0001</span></p>
+                            <p class="text-sm text-gray-500">Tarih: <span id="preview-doc-date">---</span></p>
+                            <p class="text-sm text-gray-500">Vade: <span id="preview-due-date">---</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Adres Blokları -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 text-sm">
+                        <div>
+                            <h3 class="font-semibold text-md mb-2 text-dark-text border-b border-primary/50 pb-1">Gönderen (Sizin Şirketiniz)</h3>
+                            <p class="font-medium text-gray-800" id="preview-sender-name">Şirket Adı Buraya</p>
+                            <p class="text-gray-600" id="preview-sender-address">Adres Satır 1</p>
+                            <p class="text-gray-600 mt-2">Vergi No: <span id="preview-sender-tax-id">T/ID-0000</span></p>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-md mb-2 text-dark-text border-b border-primary/50 pb-1">Alıcı (Müşteri)</h3>
+                            <p class="font-medium text-gray-800" id="preview-client-name">Müşteri Adı Buraya</p>
+                            <p class="text-gray-600" id="preview-client-address">Adres Satır 1</p>
+                            <p class="text-gray-600 mt-2">Vergi No: <span id="preview-client-tax-id">T/ID-0000</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Ürün Tablosu -->
+                    <div class="mb-10">
+                        <table class="min-w-full divide-y divide-gray-300 border border-gray-200 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/2">Açıklama</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Miktar</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Birim Fiyat</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-items-body" class="bg-white divide-y divide-gray-200">
+                                <!-- JS ile eklenecek satırlar -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- Yeni Ürün Ekleme Butonu -->
+                        <button id="add-item-btn" class="mt-4 px-4 py-2 text-sm bg-indigo-50 text-primary border border-primary hover:bg-indigo-100 rounded-lg transition flex items-center">
+                            <svg class="icon w-4 h-4 mr-1" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            Satır Ekle
+                        </button>
+                    </div>
+
+                    <!-- Toplamlar Alanı -->
+                    <div class="flex justify-end">
+                        <div class="w-full sm:w-1/2 md:w-2/5 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Ara Toplam:</span>
+                                    <span id="subtotal-display" class="font-medium text-gray-800">0.00 ₺</span>
+                                </div>
+                                <div class="flex justify-between border-b border-dashed border-gray-300 pb-2">
+                                    <span class="text-gray-600">KDV (<span id="vat-rate-display">18</span>%):</span>
+                                    <span id="vat-display" class="font-medium text-gray-800">0.00 ₺</span>
+                                </div>
+                                <div class="flex justify-between pt-2">
+                                    <span class="text-lg font-bold text-primary">GENEL TOPLAM:</span>
+                                    <span id="total-display" class="text-lg font-bold text-primary">0.00 ₺</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notlar / Alt Bilgi -->
+                    <div class="mt-12 pt-6 border-t border-gray-200">
+                        <label for="notes" class="text-sm font-semibold text-gray-700 block mb-2">Özel Notlar / Ödeme Koşulları:</label>
+                        <textarea id="notes" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition" placeholder="Ödeme koşulları, banka bilgileri veya ek mesajlar buraya yazılabilir..."></textarea>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // =========================================
+        // 1. HTML ELEMENTS VE LOCAL STORAGE SETUP
+        // =========================================
+
+        const $ = id => document.getElementById(id);
+        
+        const $docType = $('doc-type');
+        const $docNumber = $('doc-number');
+        const $docDate = $('doc-date');
+        const $dueDate = $('due-date');
+        
+        const $senderName = $('sender-name');
+        const $senderAddress = $('sender-address');
+        const $senderTaxId = $('sender-tax-id');
+
+        const $clientName = $('client-name');
+        const $clientAddress = $('client-address');
+        const $clientTaxId = $('client-tax-id');
+        
+        const $vatRate = $('vat-rate');
+        const $currencySymbol = $('currency-symbol');
+        const $notes = $('notes');
+
+        const $invoiceItemsBody = $('invoice-items-body');
+        const $addItemBtn = $('add-item-btn');
+        
+        const $subtotalDisplay = $('subtotal-display');
+        const $vatDisplay = $('vat-display');
+        const $totalDisplay = $('total-display');
+        const $vatRateDisplay = $('vat-rate-display');
+        
+        const previewElements = {
+            docType: $('preview-doc-type'),
+            docNumber: $('preview-doc-number'),
+            docDate: $('preview-doc-date'),
+            dueDate: $('preview-due-date'),
+            senderName: $('preview-sender-name'),
+            senderAddress: $('preview-sender-address'),
+            senderTaxId: $('preview-sender-tax-id'),
+            clientName: $('preview-client-name'),
+            clientAddress: $('preview-client-address'),
+            clientTaxId: $('preview-client-tax-id'),
+        };
+
+        let invoiceItems = [];
+
+        const STORAGE_KEY = 'proInvoiceXData';
+
+        // =========================================
+        // 2. CORE UTILITIES
+        // =========================================
+
+        const formatCurrency = (value) => {
+            const symbol = $currencySymbol.value || '₺';
+            return parseFloat(value).toFixed(2).replace('.', ',') + ' ' + symbol;
+        };
+
+        const calculateTotals = () => {
+            let subtotal = 0;
+            
+            invoiceItems.forEach(item => {
+                const qty = parseFloat(item.qty) || 0;
+                const price = parseFloat(item.price) || 0;
+                item.total = qty * price;
+                subtotal += item.total;
+            });
+
+            const vatRate = parseFloat($vatRate.value) || 0;
+            const vatAmount = subtotal * (vatRate / 100);
+            const total = subtotal + vatAmount;
+            
+            $subtotalDisplay.textContent = formatCurrency(subtotal);
+            $vatDisplay.textContent = formatCurrency(vatAmount);
+            $totalDisplay.textContent = formatCurrency(total);
+            $vatRateDisplay.textContent = vatRate.toFixed(2);
+        };
+
+        // =========================================
+        // 3. RENDERING & UI UPDATES
+        // =========================================
+
+        const renderInvoiceItems = () => {
+            $invoiceItemsBody.innerHTML = '';
+            invoiceItems.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition duration-150';
+                row.dataset.index = index;
+                
+                row.innerHTML = `
+                    <td class="p-3">
+                        <input type="text" data-field="description" value="${item.description || ''}" placeholder="Hizmet/Ürün Adı" class="w-full p-1 border-none focus:ring-primary focus:border-primary bg-transparent text-sm"/>
+                    </td>
+                    <td class="p-3 text-right">
+                        <input type="number" data-field="qty" value="${item.qty || ''}" placeholder="1" min="1" class="w-full p-1 text-right border-none focus:ring-primary focus:border-primary bg-transparent text-sm"/>
+                    </td>
+                    <td class="p-3 text-right">
+                        <input type="number" data-field="price" value="${item.price || ''}" placeholder="100.00" min="0" step="0.01" class="w-full p-1 text-right border-none focus:ring-primary focus:border-primary bg-transparent text-sm"/>
+                    </td>
+                    <td class="p-3 text-right font-semibold text-sm">
+                        ${formatCurrency(item.total || 0)}
+                    </td>
+                    <td class="p-3 text-center">
+                        <button data-action="remove" class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100 transition">
+                            <svg class="icon w-4 h-4" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm3-11h8v10H9V8zm3-6h2v16h-2V4z"/></svg>
+                        </button>
+                    </td>
+                `;
+                $invoiceItemsBody.appendChild(row);
+            });
+            
+            // Event listeners for new inputs
+            $invoiceItemsBody.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', handleItemInput);
+            });
+            $invoiceItemsBody.querySelectorAll('[data-action="remove"]').forEach(button => {
+                button.addEventListener('click', handleRemoveItem);
+            });
+
+            calculateTotals();
+        };
+        
+        const updatePreview = () => {
+            previewElements.docType.textContent = $docType.value.toUpperCase() || 'FATURA';
+            previewElements.docNumber.textContent = $docNumber.value || 'INV-XXXX';
+            previewElements.docDate.textContent = $docDate.value || '---';
+            previewElements.dueDate.textContent = $dueDate.value || '---';
+
+            previewElements.senderName.textContent = $senderName.value || 'Şirket Adı Buraya';
+            previewElements.senderAddress.textContent = $senderAddress.value || 'Adres Satır 1';
+            previewElements.senderTaxId.textContent = $senderTaxId.value || 'T/ID-0000';
+
+            previewElements.clientName.textContent = $clientName.value || 'Müşteri Adı Buraya';
+            previewElements.clientAddress.textContent = $clientAddress.value || 'Adres Satır 1';
+            previewElements.clientTaxId.textContent = $clientTaxId.value || 'T/ID-0000';
+            
+            // Notes update (optional for visual preview, but good for copy/export)
+            // We'll use the original textarea content for export/copy, but this updates the preview area structure if needed.
+        };
+
+
+        // =========================================
+        // 4. EVENT HANDLERS & LOGIC
+        // =========================================
+
+        const handleDataInput = () => {
+            updatePreview();
+            calculateTotals();
+            saveData();
+        };
+
+        const handleItemInput = (e) => {
+            const index = e.target.closest('tr').dataset.index;
+            const field = e.target.dataset.field;
+            
+            invoiceItems[index][field] = e.target.value;
+            
+            // Recalculate total for this specific row immediately
+            const qty = parseFloat(invoiceItems[index].qty) || 0;
+            const price = parseFloat(invoiceItems[index].price) || 0;
+            invoiceItems[index].total = qty * price;
+            
+            // Update display cell for total (without rerendering all inputs)
+            const row = e.target.closest('tr');
+            row.querySelector('[data-field="total"]').textContent = formatCurrency(invoiceItems[index].total);
+
+            calculateTotals();
+            saveData();
+        };
+
+        const handleAddItem = () => {
+            invoiceItems.push({ description: '', qty: 1, price: '', total: 0 });
+            renderInvoiceItems();
+            // Scroll to the new item row
+            $invoiceItemsBody.lastElementChild.querySelector('[data-field="description"]').focus();
+        };
+
+        const handleRemoveItem = (e) => {
+            const index = e.target.closest('tr').dataset.index;
+            invoiceItems.splice(index, 1);
+            renderInvoiceItems();
+            saveData();
+        };
+        
+        const handleExportHTML = () => {
+            // Combine all data into a structured string for copy/paste (easier than pure HTML export for text)
+            let output = `--- ${previewElements.docType.textContent} ${previewElements.docNumber.textContent} ---\n\n`;
+            
+            output += `GÖNDEREN:\n${previewElements.senderName.textContent}\n${previewElements.senderAddress.textContent}\nVergi No: ${previewElements.senderTaxId.textContent}\n\n`;
+            
+            output += `ALICI:\n${previewElements.clientName.textContent}\n${previewElements.clientAddress.textContent}\nVergi No: ${previewElements.clientTaxId.textContent}\n\n`;
+            
+            output += `TARİH: ${previewElements.docDate.textContent} | VADE: ${previewElements.dueDate.textContent}\n\n`;
+            
+            output += "ÜRÜN LİSTESİ:\n";
+            
+            // Simple text table for easy copying
+            output += "Açıklama | Miktar | Fiyat | Tutar\n";
+            output += "--------------------------------------------\n";
+            invoiceItems.filter(item => item.description).forEach(item => {
+                output += `${item.description} | ${item.qty || 0} | ${formatCurrency(item.price || 0)} | ${formatCurrency(item.total || 0)}\n`;
+            });
+            
+            output += `\nARA TOPLAM: ${$subtotalDisplay.textContent}\n`;
+            output += `KDV (${$vatRateDisplay.textContent}%): ${$vatDisplay.textContent}\n`;
+            output += `GENEL TOPLAM: ${$totalDisplay.textContent}\n\n`;
+            
+            if ($notes.value) {
+                output += `NOTLAR:\n${$notes.value}\n`;
+            }
+            
+            navigator.clipboard.writeText(output).then(() => {
+                alert('Fatura içeriği panoya kopyalandı! (Metin Formatında)');
+            }).catch(err => {
+                console.error('Kopyalama başarısız:', err);
+                alert('Kopyalama işlemi tarayıcı kısıtlamaları nedeniyle başarısız olabilir.');
+            });
+        };
+
+        const handleExportPDF = () => {
+             // ⚠️ Milyon dolarlık Micro-SaaS kuralı: PDF export, tam ölçekli bir kütüphane (örn. jsPDF) gerektirir. 
+             // Tek dosya kuralına uyarak ve harici kütüphane kullanmadan bu kısmı sadece bir placeholder olarak bırakıyoruz.
+             
+             // Gerçek bir uygulamada buraya jsPDF entegrasyonu gelirdi.
+             alert('PDF Dışa Aktarma: Bu özellik, gerçek bir Micro-SaaS uygulamasında jsPDF gibi bir kütüphane ile entegre edilir. Şu an için simüle ediliyor.');
+             console.log("Simüle Edilen PDF Verisi:", {
+                 settings: { docType: $docType.value, vat: $vatRate.value, currency: $currencySymbol.value },
+                 sender: { name: $senderName.value, address: $senderAddress.value },
+                 client: { name: $clientName.value, address: $clientAddress.value },
+                 items: invoiceItems,
+                 totals: { subtotal: $subtotalDisplay.textContent, vat: $vatDisplay.textContent, total: $totalDisplay.textContent }
+             });
+        };
+
+        // =========================================
+        // 5. LOCAL STORAGE MANAGEMENT
+        // =========================================
+
+        const saveData = () => {
+            const data = {
+                inputs: {
+                    docType: $docType.value,
+                    docNumber: $docNumber.value,
+                    docDate: $docDate.value,
+                    dueDate: $dueDate.value,
+                    senderName: $senderName.value,
+                    senderAddress: $senderAddress.value,
+                    senderTaxId: $senderTaxId.value,
+                    clientName: $clientName.value,
+                    clientAddress: $clientAddress.value,
+                    clientTaxId: $clientTaxId.value,
+                    vatRate: $vatRate.value,
+                    currencySymbol: $currencySymbol.value,
+                    notes: $notes.value,
+                },
+                items: invoiceItems
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        };
+
+        const loadData = () => {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                // Inputs
+                Object.keys(data.inputs).forEach(key => {
+                    const element = eval(`\$${key}`); // Güvenli olmayan ama tek dosya yapısı için pratik
+                    if (element && element.value !== undefined) {
+                        element.value = data.inputs[key];
+                    }
+                });
+                
+                // Items
+                invoiceItems = data.items || [];
+
+                // Initial Rendering & Update
+                updatePreview();
+                renderInvoiceItems();
+                calculateTotals();
+            } else {
+                // Default initial item if nothing is saved
+                invoiceItems.push({ description: 'Profesyonel Web Uygulama Geliştirme (1 Ay)', qty: 1, price: '15000.00', total: 15000.00 });
+                renderInvoiceItems(); // Initial render
+            }
+            
+            // Set today's date if date is empty (UX improvement)
+            if (!$docDate.value) {
+                $docDate.value = new Date().toISOString().split('T')[0];
+            }
+        };
+
+        // =========================================
+        // 6. INITIALIZATION
+        // =========================================
+
+        const initialize = () => {
+            loadData();
+            
+            // Global listeners for all input changes
+            const inputFields = document.querySelectorAll('input, textarea');
+            inputFields.forEach(el => {
+                if (el.id !== 'vat-rate' && el.id !== 'currency-symbol' && el.id !== 'doc-type' && el.id !== 'doc-number') {
+                   el.addEventListener('input', handleDataInput);
+                } else {
+                   // Specific handling for key settings that affect calculation immediately
+                   el.addEventListener('input', handleDataInput);
+                }
+            });
+
+            $addItemBtn.addEventListener('click', handleAddItem);
+            $('btn-export-html').addEventListener('click', handleExportHTML);
+            $('btn-export-pdf').addEventListener('click', handleExportPDF);
+
+            // Special listeners for settings that don't fit generic 'input' loop
+            $vatRate.addEventListener('input', handleDataInput);
+            $currencySymbol.addEventListener('input', handleDataInput);
+            
+            // Document type title update specifically (e.g., Fatura vs Teklif)
+            $docType.addEventListener('input', () => {
+                previewElements.docType.textContent = $docType.value.toUpperCase() || 'FATURA';
+                saveData();
+            });
+            
+            // Ensure preview updates immediately on load
+            updatePreview();
+        };
+
+        document.addEventListener('DOMContentLoaded', initialize);
+
+    </script>
+</body>
+</html>
