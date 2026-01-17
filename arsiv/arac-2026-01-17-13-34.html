@@ -1,0 +1,391 @@
+Harika bir meydan okuma. Full-Stack geliştirici uzmanlığımla, pazarlamacıların ve SEO uzmanlarının en sık karşılaştığı, zaman alan bir problemi çözecek, premium görünümlü bir Micro-SaaS projesi tasarlıyorum: **"SERP Meta Veri Optimizasyon Aracı"**.
+
+Bu araç, kullanıcıların girdikleri başlık (Title) ve açıklama (Description) metinlerinin Google Arama Sonuç Sayfası'nda (SERP) nasıl görüneceğini anlık olarak gösterir, karakter sınırlarını aşmama konusunda uyarır ve temel SEO performansını (pixel/karakter sınırları) görselleştirir.
+
+İşte istenen tüm teknik kurallara (Tek Dosya HTML, Tailwind CSS, Premium Görünüm, Kopyala/Yazdır) uyan çözümüm:
+
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SERP Snippet Görselleştirici & SEO Aracı</title>
+    <!-- Tailwind CSS CDN - Modern ve Hızlı UI için -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Styling for Premium Feel */
+        body {
+            background-color: #f4f7f9;
+            font-family: 'Inter', sans-serif;
+        }
+        /* SERP Simülasyon Stili */
+        .serp-snippet {
+            border: 1px solid #e2e8f0;
+            padding: 16px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .serp-title {
+            color: #1a0dab; /* Google Mavi */
+            font-size: 20px;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .serp-url {
+            color: #006621; /* Google Yeşil */
+            font-size: 14px;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+        .serp-description {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        /* Progress Bar Styling */
+        .progress-bar-container {
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10 bg-white p-6 rounded-xl shadow-lg">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2 flex items-center justify-center">
+                <svg class="w-8 h-8 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                SERP Görselleştirici Pro
+            </h1>
+            <p class="text-gray-500">Başlık (Title) ve Açıklama (Description) metinlerinizin mobil/desktop görünümünü anlık olarak optimize edin.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Sol Taraf: Giriş Alanları -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 h-fit sticky top-8">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Giriş Parametreleri</h2>
+                
+                <!-- Title Input -->
+                <div class="mb-6">
+                    <label for="titleInput" class="block text-sm font-medium text-gray-700 mb-2 flex justify-between">
+                        SEO Başlığı (<span id="titleCount">0</span> / 60 Karakter)
+                        <span id="titleStatus" class="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">OK</span>
+                    </label>
+                    <input type="text" id="titleInput" maxlength="70" placeholder="Sayfanızın dikkat çekici başlığını girin..."
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                           value="Micro-SaaS Fikirleri: Gelir Getiren Uygulamalar Oluşturma Rehberi">
+                    <div class="progress-bar-container mt-2">
+                        <div id="titleProgress" class="h-full bg-indigo-500 transition-all duration-150" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Description Input -->
+                <div class="mb-6">
+                    <label for="descInput" class="block text-sm font-medium text-gray-700 mb-2 flex justify-between">
+                        Meta Açıklama (<span id="descCount">0</span> / 155 Karakter)
+                        <span id="descStatus" class="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">OK</span>
+                    </label>
+                    <textarea id="descInput" maxlength="160" rows="3" placeholder="Kullanıcıyı tıklamaya teşvik edecek kısa bir özet girin..."
+                              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">Bu kapsamlı rehberde, gerçek dünya problemlerini çözen ve size pasif gelir sağlayacak Micro-SaaS projeleri geliştirme adımlarını keşfedin.</textarea>
+                    <div class="progress-bar-container mt-2">
+                        <div id="descProgress" class="h-full bg-indigo-500 transition-all duration-150" style="width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <!-- URL Input -->
+                 <div class="mb-8">
+                    <label for="urlInput" class="block text-sm font-medium text-gray-700 mb-2">
+                        SERP URL'si (Örn: www.alaniniz.com/rehber)
+                    </label>
+                    <input type="text" id="urlInput" placeholder="https://www.ornek.com/makale-adi"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                           value="www.micro-saas-uzmani.com/gelir-rehberi">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col space-y-3">
+                     <button id="copyBtn" 
+                        class="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H8m0 0l3-3m-3 3l3 3"></path></svg>
+                        Kopyala (Başlık + Açıklama)
+                    </button>
+
+                    <button id="printBtn" 
+                        class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 text-base font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m0-10v-4a2 2 0 012-2h6a2 2 0 012 2v4m-8 10v-4m0 0h4m-4 0h-4"></path></svg>
+                        PDF Olarak Yazdır/Kaydet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sağ Taraf: SERP Önizleme -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-indigo-200">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6l-2-2m0 0l-2 2m2-2v4m10-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Mobil SERP Önizlemesi
+                </h2>
+
+                <!-- Simülasyon Alanı (Telefon Çerçevesi hissi vermek için) -->
+                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="serp-snippet">
+                        <p id="previewUrl" class="serp-url"></p>
+                        <h3 id="previewTitle" class="serp-title"></h3>
+                        <p id="previewDesc" class="serp-description"></p>
+                    </div>
+                </div>
+
+                <!-- Metrikler ve Puanlama -->
+                <div class="mt-6 pt-4 border-t">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3">Metrik Analizi</h3>
+                    
+                    <div class="space-y-4">
+                        
+                        <!-- Title Pixel/Char Usage -->
+                        <div>
+                            <div class="flex justify-between text-sm font-medium text-gray-600 mb-1">
+                                <span>Başlık Uzunluğu</span>
+                                <span id="titleMetrics">0 / 60 Karakter</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div id="titleMetricBar" class="h-full bg-yellow-500 transition-all duration-150" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Description Pixel/Char Usage -->
+                        <div>
+                            <div class="flex justify-between text-sm font-medium text-gray-600 mb-1">
+                                <span>Açıklama Uzunluğu</span>
+                                <span id="descMetrics">0 / 155 Karakter</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div id="descMetricBar" class="h-full bg-yellow-500 transition-all duration-150" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- SEO Puanı (Basit bir gösterge) -->
+                        <div class="pt-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SEO Optimizasyon Puanı</label>
+                            <div class="flex items-center space-x-3">
+                                <div id="overallScoreContainer" class="flex-grow p-3 rounded-lg bg-red-100 text-red-700 font-bold text-center transition-colors duration-300">
+                                    Zayıf
+                                </div>
+                                <span id="overallScoreValue" class="text-2xl font-extrabold text-gray-800">0%</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const titleInput = document.getElementById('titleInput');
+            const descInput = document.getElementById('descInput');
+            const urlInput = document.getElementById('urlInput');
+            
+            const previewTitle = document.getElementById('previewTitle');
+            const previewDesc = document.getElementById('previewDesc');
+            const previewUrl = document.getElementById('previewUrl');
+
+            const titleCount = document.getElementById('titleCount');
+            const descCount = document.getElementById('descCount');
+            
+            const titleProgress = document.getElementById('titleProgress');
+            const descProgress = document.getElementById('descProgress');
+            
+            const titleStatus = document.getElementById('titleStatus');
+            const descStatus = document.getElementById('descStatus');
+
+            const titleMetrics = document.getElementById('titleMetrics');
+            const descMetrics = document.getElementById('descMetrics');
+            const titleMetricBar = document.getElementById('titleMetricBar');
+            const descMetricBar = document.getElementById('descMetricBar');
+            
+            const overallScoreContainer = document.getElementById('overallScoreContainer');
+            const overallScoreValue = document.getElementById('overallScoreValue');
+            
+            const COPY_TITLE_MAX = 60;
+            const COPY_DESC_MAX = 155;
+
+            // --- Temel Fonksiyonlar ---
+
+            function updatePreview() {
+                const titleVal = titleInput.value.trim();
+                const descVal = descInput.value.trim();
+                const urlVal = urlInput.value.trim();
+                
+                // 1. SERP Önizlemesini Güncelle
+                previewTitle.textContent = titleVal || 'Başlık Buraya Gelecek';
+                previewDesc.textContent = descVal || 'Meta açıklamanız burada görünür. Kullanıcıları çekmek için anahtar kelimeler kullanın.';
+                
+                // URL Formatlama
+                if (urlVal) {
+                    const formattedUrl = urlVal.startsWith('http') ? new URL(urlVal).hostname + (urlVal.length > 15 ? '...' : urlVal.substring(urlVal.indexOf('/'))) : urlVal;
+                    previewUrl.textContent = formattedUrl.length > 70 ? '...' + formattedUrl.substring(formattedUrl.length - 70) : formattedUrl;
+                } else {
+                     previewUrl.textContent = 'alaniniz.com/sayfa-adi';
+                }
+
+                // 2. Karakter Sayımı ve Durum Güncelleme (Giriş Alanları)
+                const tLen = titleVal.length;
+                const dLen = descVal.length;
+
+                titleCount.textContent = tLen;
+                descCount.textContent = dLen;
+                
+                // Başlık Durumu
+                let tProgress = Math.min(100, (tLen / COPY_TITLE_MAX) * 100);
+                titleProgress.style.width = `${tProgress}%`;
+                
+                if (tLen > COPY_TITLE_MAX) {
+                    titleStatus.textContent = 'UYARI';
+                    titleStatus.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-red-500 text-white';
+                    titleProgress.style.backgroundColor = '#ef4444'; // Red
+                } else if (tLen >= COPY_TITLE_MAX * 0.85) {
+                    titleStatus.textContent = 'DİKKAT';
+                    titleStatus.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-yellow-500 text-white';
+                    titleProgress.style.backgroundColor = '#f59e0b'; // Amber
+                } else {
+                    titleStatus.textContent = 'OK';
+                    titleStatus.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-green-500 text-white';
+                    titleProgress.style.backgroundColor = '#10b981'; // Green
+                }
+
+                // Açıklama Durumu
+                let dProgress = Math.min(100, (dLen / COPY_DESC_MAX) * 100);
+                descProgress.style.width = `${dProgress}%`;
+
+                if (dLen > COPY_DESC_MAX) {
+                    descStatus.textContent = 'UYARI';
+                    descStatus.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-red-500 text-white';
+                    descProgress.style.backgroundColor = '#ef4444'; // Red
+                } else if (dLen >= COPY_DESC_MAX * 0.85) {
+                    descStatus.textContent = 'DİKKAT';
+                    descStatus.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-yellow-500 text-white';
+                    descProgress.style.backgroundColor = '#f59e0b'; // Amber
+                } else {
+                    descStatus.textContent = 'OK';
+                    descStatus.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-green-500 text-white';
+                    descProgress.style.backgroundColor = '#10b981'; // Green
+                }
+                
+                // 3. Metrikleri Güncelle (Pixel/Karakter)
+                updateMetrics(tLen, dLen);
+                
+                // 4. Genel Puan
+                updateOverallScore(tLen, dLen);
+            }
+            
+            function updateMetrics(tLen, dLen) {
+                const tPerc = Math.min(100, (tLen / COPY_TITLE_MAX) * 100);
+                const dPerc = Math.min(100, (dLen / COPY_DESC_MAX) * 100);
+
+                titleMetrics.textContent = `${tLen} / ${COPY_TITLE_MAX} Karakter`;
+                descMetrics.textContent = `${dLen} / ${COPY_DESC_MAX} Karakter`;
+                
+                titleMetricBar.style.width = `${tPerc}%`;
+                descMetricBar.style.width = `${dPerc}%`;
+
+                // Renk kodlaması için metrik çubukları
+                let tColor = '#f59e0b'; // Yellow
+                if (tPerc <= 100) tColor = '#10b981'; // Green
+                if (tPerc > 100) tColor = '#ef4444'; // Red
+                titleMetricBar.style.backgroundColor = tColor;
+
+                let dColor = '#f59e0b'; // Yellow
+                if (dPerc <= 100) dColor = '#10b981'; // Green
+                if (dPerc > 100) dColor = '#ef4444'; // Red
+                descMetricBar.style.backgroundColor = dColor;
+            }
+
+            function updateOverallScore(tLen, dLen) {
+                let score = 0;
+                let maxScore = 2; // Başlık ve Açıklama kontrolü
+
+                // Başlık Kontrolü
+                if (tLen > 0 && tLen <= COPY_TITLE_MAX) {
+                    score += 0.5;
+                } else if (tLen > COPY_TITLE_MAX) {
+                    // Aşırı uzunlukta puan vermiyoruz
+                } else {
+                     score += 0.25; // Çok kısa değilse minimum puan
+                }
+                
+                // Açıklama Kontrolü
+                if (dLen > 0 && dLen <= COPY_DESC_MAX) {
+                    score += 0.5;
+                } else if (dLen > COPY_DESC_MAX) {
+                    // Aşırı uzunlukta puan vermiyoruz
+                } else {
+                     score += 0.25; // Çok kısa değilse minimum puan
+                }
+                
+                const percentage = Math.round((score / maxScore) * 100);
+                overallScoreValue.textContent = `${percentage}%`;
+
+                // Renk ve Metin Güncelleme
+                overallScoreContainer.className = 'flex-grow p-3 rounded-lg font-bold text-center transition-colors duration-300';
+                
+                if (percentage >= 80) {
+                    overallScoreContainer.classList.add('bg-green-100', 'text-green-700');
+                    overallScoreContainer.textContent = 'Mükemmel';
+                } else if (percentage >= 50) {
+                    overallScoreContainer.classList.add('bg-yellow-100', 'text-yellow-700');
+                    overallScoreContainer.textContent = 'İyi';
+                } else {
+                    overallScoreContainer.classList.add('bg-red-100', 'text-red-700');
+                    overallScoreContainer.textContent = 'Zayıf';
+                }
+            }
+
+            // --- Event Dinleyicileri ---
+
+            // Gerçek zamanlı güncelleme için tüm inputları dinle
+            [titleInput, descInput, urlInput].forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+            
+            // Kopyala Butonu
+            document.getElementById('copyBtn').addEventListener('click', function() {
+                const textToCopy = `Başlık: ${titleInput.value}\nAçıklama: ${descInput.value}`;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Kopyalandı!';
+                    this.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    this.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                        this.classList.add('bg-green-600', 'hover:bg-green-700');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Kopyalama başarısız oldu: ', err);
+                    alert('Kopyalama sırasında bir hata oluştu. Lütfen metni elle kopyalayın.');
+                });
+            });
+
+            // Yazdır Butonu
+            document.getElementById('printBtn').addEventListener('click', function() {
+                // Print sırasında sadece snippet'in görünmesini sağlamak için geçici CSS müdahalesi yapabiliriz,
+                // ancak basitlik ve Micro-SaaS kuralına uyum için window.print() yeterlidir.
+                window.print();
+            });
+
+            // İlk yüklemede önizlemeyi ayarla
+            updatePreview();
+        });
+    </script>
+</body>
+</html>
+```
