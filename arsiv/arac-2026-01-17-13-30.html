@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastgele Yemek Fikri Üretici</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Global Font Ayarları */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-lg bg-white shadow-2xl rounded-xl p-8 sm:p-10 border border-gray-100">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Ne Yesek?</h1>
+            <p class="text-gray-500">Kararsızlığa son! Günlük rastgele yemek fikri üretir.</p>
+        </header>
+
+        <div id="result-card" class="min-h-[180px] flex flex-col items-center justify-center bg-indigo-50 border-4 border-dashed border-indigo-200 rounded-lg p-6 transition-all duration-300 ease-in-out">
+            <p id="initial-text" class="text-xl text-indigo-600 font-semibold text-center">Yemek fikri için butona tıklayın!</p>
+            <p id="meal-name" class="hidden text-4xl font-bold text-gray-800 text-center mt-2 animate-fadeIn"></p>
+            <p id="meal-type" class="hidden text-lg text-indigo-500 mt-1 animate-fadeInUp"></p>
+        </div>
+
+        <div class="mt-8 space-y-4">
+            <button id="generate-btn" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out transform hover:scale-[1.01] active:scale-[0.99]">
+                <svg class="w-6 h-6 mr-3 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 15m0 0h5m11 0v-5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0h-5"></path></svg>
+                Rastgele Fikir Üret
+            </button>
+
+            <div id="feedback" class="text-sm text-red-500 mt-2 hidden"></div>
+        </div>
+
+        <footer class="mt-8 text-center text-xs text-gray-400 border-t pt-4">
+            Tek Dosya Uygulaması | Full-Stack Yaratıcılığı
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateBtn = document.getElementById('generate-btn');
+            const mealNameDisplay = document.getElementById('meal-name');
+            const mealTypeDisplay = document.getElementById('meal-type');
+            const initialText = document.getElementById('initial-text');
+            const resultCard = document.getElementById('result-card');
+            const feedback = document.getElementById('feedback');
+
+            // Basit ve eğlenceli yemek listesi (Türk mutfağı ve dünya mutfağından karışık)
+            const mealDatabase = [
+                { name: "Karnıyarık", type: "Ana Yemek", tags: ["etli", "sebzeli", "klasik"] },
+                { name: "Mercimek Çorbası", type: "Çorba", tags: ["vejetaryen", "hızlı"] },
+                { name: "İskender Kebab", type: "Ana Yemek", tags: ["etli", "ağır"] },
+                { name: "Menemen", type: "Kahvaltılık/Hafif", tags: ["vejetaryen", "yumurtalı"] },
+                { name: "Pizza (Eve Söyle)", type: "Hazır Yiyecek", tags: ["hızlı", "konfor"] },
+                { name: "Makarna Bolognese", type: "Ana Yemek", tags: ["etli", "makarna"] },
+                { name: "Zeytinyağlı Yaprak Sarma", type: "Zeytinyağlı", tags: ["vejetaryen", "soğuk"] },
+                { name: "Tavuk Sote", type: "Ana Yemek", tags: ["tavuklu", "hızlı"] },
+                { name: "Pide", type: "Fırın/Hamur", tags: ["etli", "hazır"] },
+                { name: "Falafel Dürüm", type: "Vejetaryen", tags: ["vegan", "hızlı"] },
+                { name: "Kuru Fasulye Pilav", type: "Ana Yemek", tags: ["etli/varsa", "klasik", "ağır"] },
+                { name: "Taze Fasulye Yemeği", type: "Zeytinyağlı", tags: ["sebzeli", "hafif"] },
+                { name: "Fırında Somon ve Sebzeler", type: "Ana Yemek", tags: ["balık", "sağlıklı"] },
+                { name: "Noodle (Hazır Paket)", type: "Hızlı Çözüm", tags: ["hızlı", "pratik"] },
+                { name: "Izgara Köfte", type: "Ana Yemek", tags: ["etli", "klasik"] },
+            ];
+
+            function generateRandomMeal() {
+                feedback.classList.add('hidden');
+                
+                // Animasyonu başlat
+                mealNameDisplay.classList.add('hidden', 'opacity-0');
+                mealTypeDisplay.classList.add('hidden', 'opacity-0');
+                initialText.classList.remove('hidden');
+
+                resultCard.classList.add('opacity-50');
+                
+                // 1 saniye sonra rastgele seçim yap
+                setTimeout(() => {
+                    const randomIndex = Math.floor(Math.random() * mealDatabase.length);
+                    const meal = mealDatabase[randomIndex];
+
+                    // Eski görünümü temizle
+                    initialText.classList.add('hidden');
+
+                    // Yeni yemeği göster
+                    mealNameDisplay.textContent = meal.name;
+                    mealTypeDisplay.textContent = `${meal.type} (${meal.tags.join(', ')})`;
+                    
+                    mealNameDisplay.classList.remove('hidden');
+                    mealTypeDisplay.classList.remove('hidden');
+
+                    // Animasyon sınıflarını ekleyerek yeniden canlandır
+                    void mealNameDisplay.offsetWidth; // DOM reflow tetikle
+                    void mealTypeDisplay.offsetWidth;
+                    
+                    mealNameDisplay.classList.remove('opacity-0');
+                    mealTypeDisplay.classList.remove('opacity-0');
+                    
+                    resultCard.classList.remove('opacity-50');
+
+                }, 1000); // Kısa bir gecikme ile yüklenme hissi verilir
+            }
+
+            generateBtn.addEventListener('click', generateRandomMeal);
+
+            // Sayfa yüklendiğinde ilk defa çalıştır (Opsiyonel: Başlangıçta bir fikir göster)
+            // generateRandomMeal(); 
+        });
+    </script>
+</body>
+</html>
