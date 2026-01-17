@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastgele Gün Fikri Üretici</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white shadow-2xl rounded-xl p-8 w-full max-w-lg transform transition duration-500 hover:shadow-3xl">
+        <div class="text-center mb-8">
+            <svg class="w-12 h-12 mx-auto text-indigo-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <h1 class="text-3xl font-extrabold text-gray-900">Bugün Ne Yapsam?</h1>
+            <p class="mt-2 text-gray-600">Sıkıcı rutinlere son! İşte size ilham verecek rastgele bir fikir.</p>
+        </div>
+
+        <div id="idea-card" class="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-lg mb-8 transition duration-300 hover:bg-indigo-100 min-h-[100px] flex items-center justify-center">
+            <p id="idea-text" class="text-xl font-semibold text-gray-800 text-center">Fikri üretmek için butona basın!</p>
+        </div>
+
+        <button id="generate-btn" class="w-full flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out transform active:scale-95">
+            <svg class="w-5 h-5 mr-2 animate-spin hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 13m0 0h5m5 0h5a8 8 0 00-15.356-2z"></path></svg>
+            Yeni Fikir Üret
+        </button>
+
+        <div class="mt-6 text-xs text-gray-400 text-center">
+            Tasarım: Tam Yığın Geliştirici Yaratıcılığı
+        </div>
+    </div>
+
+    <script>
+        const ideaText = document.getElementById('idea-text');
+        const generateBtn = document.getElementById('generate-btn');
+        const spinner = generateBtn.querySelector('svg');
+
+        const dailyIdeas = [
+            "Evdeki 5 eşyanın yerini değiştirin.",
+            "20 dakika boyunca hiçbir şeye bakmadan pencereden dışarıyı izleyin.",
+            "Hiç bilmediğiniz bir şarkıyı baştan sona ezberlemeye çalışın.",
+            "Eski bir hobinize 1 saat ayırın (resim, müzik aleti vb.).",
+            "Giyinme dolabınızdaki en rahatsız edici kıyafeti giyin ve 10 dakika gezin.",
+            "Bir sonraki alışveriş listenizi sadece el yazısıyla hazırlayın.",
+            "Daha önce hiç denemediğiniz bir baharatı kullanarak rastgele bir yemek yapın (küçük porsiyon).",
+            "Eski bir dostunuza el yazısıyla bir not gönderin.",
+            "Telefonunuzdaki en eski 5 fotoğrafı silin.",
+            "Sadece mavi renkteki eşyalarınızı toplayıp bir araya getirin.",
+            "Yarın için yapmanız gereken en zor işi bugün küçük bir parçaya bölüp halledin.",
+            "15 dakika boyunca sadece nefesinize odaklanın (meditasyon/farkındalık).",
+            "Çalışma masanızdaki tüm kabloları düzenleyin.",
+            "Bir sonraki tatil yerinizin 5 farklı özelliğini araştırın (gerçekçi olmayabilir).",
+            "Birine iltifat edin, ama bunu e-posta veya mesajla değil, yüz yüze yapın.",
+            "Çevrenizdeki en ilginç ağacı veya çiçeği bulun ve adını öğrenin.",
+            "Kendiniz için 5 dakikalık 'Gelecek Ben'e Mektup' yazın.",
+            "Evdeki tüm aynaları temizleyin.",
+            "Öğle yemeğinizi ayakta yiyin.",
+            "Güneş batarken (veya doğarken) kısa bir video çekin ve 'zaman atlamalı' gibi oynatın."
+        ];
+
+        function generateIdea() {
+            // Butonu devre dışı bırak ve yükleniyor animasyonunu göster
+            generateBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            generateBtn.querySelector('span') ? generateBtn.querySelector('span').classList.add('hidden') : null; // Eğer metin varsa gizle
+
+            // Hafif bir gecikme ekle (API çağrısı simülasyonu için)
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * dailyIdeas.length);
+                const newIdea = dailyIdeas[randomIndex];
+                
+                // Eski içeriği yumuşak bir geçişle değiştir
+                ideaText.style.opacity = 0;
+                
+                setTimeout(() => {
+                    ideaText.textContent = newIdea;
+                    ideaText.style.opacity = 1; // Yeni içeriği görünür yap
+                }, 300); // Fade out süresi
+
+                // Yüklenme bittiğinde butonu tekrar etkinleştir
+                setTimeout(() => {
+                    generateBtn.disabled = false;
+                    spinner.classList.add('hidden');
+                    generateBtn.querySelector('span') ? generateBtn.querySelector('span').classList.remove('hidden') : null; // Metni geri getir (eğer buton metni olsaydı)
+                }, 700); // Toplam gecikme süresi
+                
+            }, 500); // Butonun hemen devre dışı kalma süresi
+        }
+
+        generateBtn.addEventListener('click', generateIdea);
+
+        // İlk yüklemede bir fikir üret (opsiyonel, ama kullanıcı deneyimini artırır)
+        // Not: İlk yüklemede bekleme süresi eklemedik, hemen fikir üretmek için
+        document.addEventListener('DOMContentLoaded', () => {
+            // İlk çalıştırmada sadece metni değiştir, animasyonları sadece butona basıldığında yap.
+            const initialIndex = Math.floor(Math.random() * dailyIdeas.length);
+            ideaText.textContent = dailyIdeas[initialIndex];
+        });
+
+    </script>
+</body>
+</html>
