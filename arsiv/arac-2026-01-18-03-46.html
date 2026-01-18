@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Contract Lifecycle Manager (ECLM)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5; /* Indigo 600 */
+            --secondary-color: #10b981; /* Emerald 500 */
+            --bg-color: #f8fafc; /* Slate 50 */
+            --card-bg: #ffffff;
+            --text-color: #1e293b; /* Slate 800 */
+        }
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca; /* Indigo 700 */
+        }
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #059669; /* Emerald 600 */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="app" class="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
+        <!-- Header -->
+        <header class="p-6 bg-slate-800 text-white flex items-center justify-between border-b-4 border-indigo-500">
+            <h1 class="text-3xl font-extrabold tracking-tight flex items-center">
+                <svg class="w-8 h-8 mr-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 15h.01"></path></svg>
+                ContractFlow Pro
+            </h1>
+            <p class="text-sm text-indigo-300 hidden sm:block">Milyon Dolarlık Sözleşme Yönetimi</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="p-6 md:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+            <!-- Input/Control Panel (Column 1 & 2) -->
+            <div class="lg:col-span-2 space-y-8">
+                <h2 class="text-2xl font-semibold text-slate-700 border-b pb-3 mb-4">Sözleşme Parametreleri Girişi</h2>
+                
+                <!-- Section: Core Details -->
+                <div class="bg-slate-50 p-5 rounded-lg shadow-inner border border-slate-200 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="contractTitle" class="block text-sm font-medium text-slate-700 mb-1">Sözleşme Başlığı</label>
+                            <input type="text" id="contractTitle" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="Örn: Yıllık Lisans Anlaşması - Proje X">
+                        </div>
+                        <div>
+                            <label for="clientName" class="block text-sm font-medium text-slate-700 mb-1">Müşteri/Karşı Taraf Adı</label>
+                            <input type="text" id="clientName" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="Örn: Global Tech Solutions A.Ş.">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="startDate" class="block text-sm font-medium text-slate-700 mb-1">Başlangıç Tarihi</label>
+                            <input type="date" id="startDate" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                        </div>
+                        <div>
+                            <label for="endDate" class="block text-sm font-medium text-slate-700 mb-1">Bitiş Tarihi</label>
+                            <input type="date" id="endDate" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                        </div>
+                        <div>
+                            <label for="value" class="block text-sm font-medium text-slate-700 mb-1">Sözleşme Değeri (USD)</label>
+                            <input type="number" id="value" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="Örn: 150000">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="summary" class="block text-sm font-medium text-slate-700 mb-1">Kısa Özet ve Kapsam</label>
+                        <textarea id="summary" rows="3" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" placeholder="Hizmetin temel kapsamını ve ana yükümlülükleri kısaca belirtin..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Section: Renewal & Alerts -->
+                <div class="bg-white p-5 rounded-lg shadow border border-indigo-100 space-y-4">
+                    <h3 class="text-xl font-semibold text-indigo-600 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Otomatik Yenileme & Bildirim Ayarları
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="renewalNoticeDays" class="block text-sm font-medium text-slate-700 mb-1">Yenileme Bildirim Günü (Default: 90)</label>
+                            <input type="number" id="renewalNoticeDays" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition duration-150" placeholder="90">
+                        </div>
+                        <div>
+                            <label for="autoRenew" class="block text-sm font-medium text-slate-700 mb-1">Otomatik Yenileme Durumu</label>
+                            <select id="autoRenew" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 bg-white">
+                                <option value="No">Hayır</option>
+                                <option value="Yes">Evet (Varsayılan)</option>
+                                <option value="Negotiable">Görüşülebilir</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-200">
+                    <button id="generateBtn" class="btn-primary text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl flex-1 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Sözleşme Özeti Oluştur
+                    </button>
+                    <button id="clearBtn" class="bg-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-lg hover:bg-slate-300 transition duration-150 flex-1 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Tüm Alanları Temizle
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Output/Summary Panel (Column 3) -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-8 bg-white p-6 border-4 border-emerald-300 rounded-xl shadow-2xl">
+                    <h3 class="text-xl font-bold text-emerald-700 mb-4 flex items-center border-b pb-2">
+                        <svg class="w-6 h-6 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        Özet Kartı
+                    </h3>
+                    
+                    <!-- Summary Output Area -->
+                    <div id="summaryOutput" class="min-h-[200px] bg-slate-50 p-4 rounded-lg border border-slate-200 text-slate-700 break-words whitespace-pre-wrap">
+                        <p class="text-sm text-center text-slate-500 mt-8">Parametreleri girin ve "Sözleşme Özeti Oluştur" butonuna tıklayın.</p>
+                    </div>
+
+                    <!-- Export Controls -->
+                    <div class="mt-6 space-y-3">
+                        <button id="copyBtn" class="w-full btn-secondary text-white font-bold py-2 px-4 rounded-lg opacity-50 cursor-not-allowed flex items-center justify-center" disabled>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10a1 1 0 01-1-1v-3a1 1 0 011-1h6a1 1 0 011 1v3a1 1 0 01-1 1z"></path></svg>
+                            Metni Kopyala
+                        </button>
+                        <button id="pdfBtn" class="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-600 transition duration-150 opacity-50 cursor-not-allowed flex items-center justify-center" disabled>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 13H5m0-4h14M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            PDF Olarak İndir (Simüle)
+                        </button>
+                         <button id="saveVisualBtn" class="w-full bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition duration-150 opacity-50 cursor-not-allowed flex items-center justify-center" disabled>
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Görsel Kaydet (Simüle)
+                        </button>
+                    </div>
+                    
+                    <div id="statusMessage" class="mt-4 p-3 text-sm rounded-lg hidden"></div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = {
+                title: document.getElementById('contractTitle'),
+                client: document.getElementById('clientName'),
+                startDate: document.getElementById('startDate'),
+                endDate: document.getElementById('endDate'),
+                value: document.getElementById('value'),
+                summary: document.getElementById('summary'),
+                renewalNoticeDays: document.getElementById('renewalNoticeDays'),
+                autoRenew: document.getElementById('autoRenew'),
+                generateBtn: document.getElementById('generateBtn'),
+                clearBtn: document.getElementById('clearBtn'),
+                copyBtn: document.getElementById('copyBtn'),
+                pdfBtn: document.getElementById('pdfBtn'),
+                saveVisualBtn: document.getElementById('saveVisualBtn'),
+                summaryOutput: document.getElementById('summaryOutput'),
+                statusMessage: document.getElementById('statusMessage')
+            };
+
+            const STORAGE_KEY = 'contractFlowData';
+
+            // --- UTILITY FUNCTIONS ---
+
+            function showStatus(message, type = 'success') {
+                elements.statusMessage.textContent = message;
+                elements.statusMessage.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800');
+                
+                if (type === 'success') {
+                    elements.statusMessage.classList.add('bg-green-100', 'text-green-800');
+                } else {
+                    elements.statusMessage.classList.add('bg-red-100', 'text-red-800');
+                }
+                
+                // Otomatik temizleme
+                setTimeout(() => {
+                    elements.statusMessage.classList.add('hidden');
+                }, 5000);
+            }
+
+            function updateExportButtons(isEnabled) {
+                elements.copyBtn.disabled = !isEnabled;
+                elements.pdfBtn.disabled = !isEnabled;
+                elements.saveVisualBtn.disabled = !isEnabled;
+                
+                const opacity = isEnabled ? '1' : '0.5';
+                const cursor = isEnabled ? 'pointer' : 'not-allowed';
+                elements.copyBtn.style.opacity = opacity;
+                elements.copyBtn.style.cursor = cursor;
+                elements.pdfBtn.style.opacity = opacity;
+                elements.pdfBtn.style.cursor = cursor;
+                elements.saveVisualBtn.style.opacity = opacity;
+                elements.saveVisualBtn.style.cursor = cursor;
+            }
+
+            // --- LOCAL STORAGE HANDLING ---
+
+            function saveToLocalStorage() {
+                const data = {
+                    title: elements.title.value,
+                    client: elements.client.value,
+                    startDate: elements.startDate.value,
+                    endDate: elements.endDate.value,
+                    value: elements.value.value,
+                    summary: elements.summary.value,
+                    renewalNoticeDays: elements.renewalNoticeDays.value,
+                    autoRenew: elements.autoRenew.value,
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            function loadFromLocalStorage() {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    elements.title.value = data.title || '';
+                    elements.client.value = data.client || '';
+                    elements.startDate.value = data.startDate || '';
+                    elements.endDate.value = data.endDate || '';
+                    elements.value.value = data.value || '';
+                    elements.summary.value = data.summary || '';
+                    elements.renewalNoticeDays.value = data.renewalNoticeDays || '';
+                    elements.autoRenew.value = data.autoRenew || 'No';
+                    
+                    // Veri yüklendiğinde, özet alanını tekrar oluştur
+                    if (data.title || data.client) {
+                        generateSummary(false); // LocalStorage'dan yüklenen verilerle özet oluştur
+                    }
+                }
+            }
+
+            function clearAllData() {
+                localStorage.removeItem(STORAGE_KEY);
+                Object.keys(elements).forEach(key => {
+                    if (elements[key] && elements[key].tagName === 'INPUT' || elements[key].tagName === 'TEXTAREA' || elements[key].tagName === 'SELECT') {
+                        elements[key].value = '';
+                    }
+                });
+                elements.summaryOutput.innerHTML = '<p class="text-sm text-center text-slate-500 mt-8">Parametreleri girin ve "Sözleşme Özeti Oluştur" butonuna tıklayın.</p>';
+                updateExportButtons(false);
+                showStatus("Tüm alanlar ve kayıtlı veriler temizlendi.", 'info');
+            }
+            
+            // --- CORE LOGIC ---
+
+            function generateSummary(displayStatus = true) {
+                const title = elements.title.value.trim();
+                const client = elements.client.value.trim();
+                const startDate = elements.startDate.value;
+                const endDate = elements.endDate.value;
+                const value = elements.value.value;
+                const summaryText = elements.summary.value.trim();
+                const noticeDays = elements.renewalNoticeDays.value || 90;
+                const autoRenew = elements.autoRenew.value;
+
+                if (!title || !client || !startDate || !endDate || !value) {
+                    if (displayStatus) {
+                         showStatus("Lütfen Başlık, Müşteri, Başlangıç/Bitiş Tarihi ve Değer alanlarını doldurun.", 'error');
+                    }
+                    elements.summaryOutput.innerHTML = '<p class="text-sm text-center text-red-500 mt-8">Gerekli alanlar boş bırakılamaz!</p>';
+                    updateExportButtons(false);
+                    return;
+                }
+                
+                // Formatlama
+                const formattedValue = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(parseFloat(value));
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Varsayılan bildirim tarihi hesaplama (Sadece demo için, gerçekte backend bunu yapardı)
+                let dueDate = new Date(endDate);
+                dueDate.setDate(dueDate.getDate() - parseInt(noticeDays));
+                const dueDateFormatted = dueDate.toISOString().split('T')[0];
+
+                // HTML Output Oluşturma (Tailwind ile zenginleştirilmiş kurumsal görünüm)
+                const htmlContent = `
+                    <div class="contract-card p-5 bg-white border border-indigo-200 rounded-lg shadow-lg">
+                        <h4 class="text-xl font-bold text-indigo-700 mb-2">${title}</h4>
+                        <p class="text-sm text-slate-600 mb-3 border-b pb-2">Karşı Taraf: <strong class="text-slate-800">${client}</strong></p>
+                        
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between border-b border-dashed py-1">
+                                <span class="text-slate-500">Başlangıç:</span>
+                                <span class="font-medium text-slate-800">${startDate}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-dashed py-1">
+                                <span class="text-slate-500">Bitiş:</span>
+                                <span class="font-bold text-red-600">${endDate}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-dashed py-1">
+                                <span class="text-slate-500">Tahmini Değer:</span>
+                                <span class="font-bold text-emerald-700">${formattedValue}</span>
+                            </div>
+                             <div class="flex justify-between border-b border-dashed py-1">
+                                <span class="text-slate-500">Oluşturulma Tarihi:</span>
+                                <span class="font-medium text-slate-800">${today}</span>
+                            </div>
+                        </div>
+
+                        <h5 class="text-lg font-semibold text-indigo-600 mt-4 mb-1">Yenileme & Risk Bilgisi</h5>
+                        <ul class="list-disc list-inside text-sm space-y-1 ml-2">
+                            <li>Otomatik Yenileme: <span class="font-bold ${autoRenew === 'Yes' ? 'text-emerald-600' : 'text-red-600'}">${autoRenew}</span></li>
+                            <li>Bildirim Eşiği: ${noticeDays} gün önce (${dueDateFormatted})</li>
+                        </ul>
+                        
+                        ${summaryText ? `
+                            <div class="mt-4 pt-3 border-t border-indigo-200">
+                                <h5 class="text-lg font-semibold text-indigo-600 mb-1">Kapsam Özeti</h5>
+                                <p class="text-sm italic text-slate-700">${summaryText}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                elements.summaryOutput.innerHTML = htmlContent;
+                updateExportButtons(true);
+                saveToLocalStorage();
+                if (displayStatus) {
+                     showStatus(`Sözleşme "${title}" başarıyla oluşturuldu ve kaydedildi.`);
+                }
+            }
+
+            // --- EVENT LISTENERS ---
+
+            // 1. Input Değişikliklerini Dinle (LocalStorage ve Buton Aktivasyonu için)
+            [elements.title, elements.client, elements.startDate, elements.endDate, elements.value, elements.summary, elements.renewalNoticeDays, elements.autoRenew].forEach(el => {
+                el.addEventListener('input', () => {
+                    generateSummary(false);
+                });
+            });
+
+            // 2. Oluşturma Butonu
+            elements.generateBtn.addEventListener('click', () => generateSummary(true));
+            
+            // 3. Temizle Butonu
+            elements.clearBtn.addEventListener('click', clearAllData);
+
+            // 4. Kopyala Butonu (Gerçek İşlevsellik)
+            elements.copyBtn.addEventListener('click', () => {
+                const textToCopy = elements.summaryOutput.innerText;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showStatus("Sözleşme metni panoya kopyalandı.", 'success');
+                }).catch(err => {
+                    showStatus('Kopyalama başarısız oldu.', 'error');
+                    console.error('Kopyalama hatası:', err);
+                });
+            });
+            
+            // 5. PDF İndir (Simüle)
+            elements.pdfBtn.addEventListener('click', () => {
+                if (!elements.pdfBtn.disabled) {
+                    // Gerçek bir Micro-SaaS'ta burada jsPDF veya html2canvas ile PDF oluşturulurdu.
+                    showStatus("PDF Oluşturma işlemi başlatıldı (Simüle edildi).", 'success');
+                }
+            });
+
+            // 6. Görsel Kaydet (Simüle)
+             elements.saveVisualBtn.addEventListener('click', () => {
+                if (!elements.saveVisualBtn.disabled) {
+                    // Gerçek bir Micro-SaaS'ta html2canvas ile ekran görüntüsü alınırdı.
+                    showStatus("Sözleşme görseli indirme penceresi açılıyor (Simüle edildi).", 'success');
+                }
+            });
+
+
+            // --- INITIALIZATION ---
+            loadFromLocalStorage();
+            // Başlangıçta butonların durumunu ayarla (Eğer LocalStorage'da veri varsa ama input'lar boşsa diye)
+            const hasData = !!localStorage.getItem(STORAGE_KEY);
+            if (hasData && elements.title.value) {
+                updateExportButtons(true);
+            } else {
+                updateExportButtons(false);
+            }
+        });
+    </script>
+</body>
+</html>
